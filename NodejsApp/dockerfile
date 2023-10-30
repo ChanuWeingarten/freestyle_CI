@@ -1,0 +1,44 @@
+
+# Use a smaller base image
+FROM node:14-alpine AS build
+
+WORKDIR /app
+
+COPY package*.json ./
+
+RUN npm install && \
+    rm -f package*.json
+
+COPY . .
+# Runtime stage
+FROM node:14-alpine AS runtime
+
+ENV FLASK_ENV development
+
+WORKDIR /app
+
+COPY --from=build /app ./
+
+EXPOSE 4000
+
+CMD ["node", "index.js"]
+
+
+
+# FROM node:18-slim
+
+# WORKDIR /app
+
+# COPY package*.json ./
+
+# RUN npm install
+
+# VOLUME [ "/app" ]
+
+# ENV FLASK_ENV development
+
+# COPY . .
+
+# EXPOSE 4000
+
+# CMD ["node", "index.js"]
